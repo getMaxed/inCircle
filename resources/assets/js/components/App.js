@@ -1,10 +1,34 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class App extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            body: ''
+        };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        this.postData();
+        console.log(this.state.body);
+    }
+
+    postData() {
+        axios.post('/posts', {
+            body: this.state.body
+        });
+    }
+
+    handleChange(e) {
+        this.setState({
+            body: e.target.value
+        })
     }
 
     render() {
@@ -16,9 +40,10 @@ class App extends Component {
                             <div className="card-header">Write something</div>
 
                             <div className="card-body">
-                                <form>
+                                <form onSubmit={this.handleSubmit}>
                                     <div className="form-group">
                                         <textarea
+                                            onChange={this.handleChange}
                                             className="form-control"
                                             rows="5"
                                             maxLength="240"
