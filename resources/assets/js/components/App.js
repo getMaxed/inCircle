@@ -82,7 +82,7 @@ class App extends Component {
                                         </div>
                                         <div className="media-body">
                                             <div className="user">
-                                                <a href="#">
+                                                <a href={`/users/${post.user.username}`}>
                                                     <b>{post.user.username}</b>
                                                 </a>
                                             </div>
