@@ -54887,18 +54887,52 @@ var App = function (_Component) {
 
         _this.state = {
             body: '',
-            posts: []
+            posts: [],
+            loading: false
         };
 
         _this.handleSubmit = _this.handleSubmit.bind(_this);
         _this.handleChange = _this.handleChange.bind(_this);
+        _this.renderPosts = _this.renderPosts.bind(_this);
         return _this;
     }
 
     _createClass(App, [{
+        key: 'getPosts',
+        value: function getPosts() {
+            var _this2 = this;
+
+            // this.setState({loading:true});
+            __WEBPACK_IMPORTED_MODULE_1_axios___default.a.get('/posts').then(function (response) {
+                return _this2.setState({
+                    posts: [].concat(_toConsumableArray(response.data.posts))
+                    // loading: false
+                });
+            });
+        }
+    }, {
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            this.getPosts();
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this3 = this;
+
+            this.interval = setInterval(function () {
+                return _this3.getPosts();
+            }, 10000);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            clearInterval(this.interval);
+        }
+    }, {
         key: 'handleSubmit',
         value: function handleSubmit(e) {
-            var _this2 = this;
+            var _this4 = this;
 
             e.preventDefault();
             // this.postData();
@@ -54906,8 +54940,8 @@ var App = function (_Component) {
                 body: this.state.body
             }).then(function (response) {
                 console.log(response);
-                _this2.setState({
-                    posts: [].concat(_toConsumableArray(_this2.state.posts), [response.data])
+                _this4.setState({
+                    posts: [].concat(_toConsumableArray(_this4.state.posts), [response.data])
                 });
             });
             this.setState({
@@ -54926,6 +54960,43 @@ var App = function (_Component) {
         value: function handleChange(e) {
             this.setState({
                 body: e.target.value
+            });
+        }
+    }, {
+        key: 'renderPosts',
+        value: function renderPosts() {
+            return this.state.posts.map(function (post) {
+                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { key: post.id, className: 'media' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'media-left' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: post.user.avatar, className: 'media-object mr-2' })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'media-body' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'user' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'a',
+                                { href: '/users/' + post.user.username },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'b',
+                                    null,
+                                    post.user.username
+                                )
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'p',
+                            null,
+                            post.body
+                        )
+                    )
+                );
             });
         }
     }, {
@@ -54983,43 +55054,8 @@ var App = function (_Component) {
                                 { className: 'card-header' },
                                 'Recent posts'
                             ),
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'div',
-                                { className: 'card-body' },
-                                this.state.posts.map(function (post) {
-                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'div',
-                                        { key: post.id, className: 'media' },
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'div',
-                                            { className: 'media-left' },
-                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: post.user.avatar, className: 'media-object mr-2' })
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'div',
-                                            { className: 'media-body' },
-                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                'div',
-                                                { className: 'user' },
-                                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                    'a',
-                                                    { href: '/users/' + post.user.username },
-                                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                        'b',
-                                                        null,
-                                                        post.user.username
-                                                    )
-                                                )
-                                            ),
-                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                'p',
-                                                null,
-                                                post.body
-                                            )
-                                        )
-                                    );
-                                })
-                            )
+                            !this.state.loading ? this.renderPosts() : 'Loading',
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'card-body' })
                         )
                     )
                 )
