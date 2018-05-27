@@ -59911,8 +59911,11 @@ var App = function (_Component) {
             var _this3 = this;
 
             Echo.private('new-post').listen('PostCreated', function (e) {
-                // console.log(e)
-                _this3.setState({ posts: [e.post, _this3.state.posts] });
+                // console.log('from pusher', e.post);
+                // this.setState({posts: [e.post, ...this.state.posts]});
+                if (window.Laravel.user.following.includes(e.post.user_id)) {
+                    _this3.setState({ posts: [e.post].concat(_toConsumableArray(_this3.state.posts)) });
+                }
             });
             // this.interval = setInterval(() => this.getPosts(), 10000)
         }
@@ -59931,9 +59934,9 @@ var App = function (_Component) {
             __WEBPACK_IMPORTED_MODULE_1_axios___default.a.post('/posts', {
                 body: this.state.body
             }).then(function (response) {
-                console.log(response);
+                // console.log('from handle submit', response);
                 _this4.setState({
-                    posts: [].concat(_toConsumableArray(_this4.state.posts), [response.data])
+                    posts: [response.data].concat(_toConsumableArray(_this4.state.posts))
                 });
             });
             this.setState({
@@ -59980,7 +59983,10 @@ var App = function (_Component) {
                                     null,
                                     post.user.username
                                 )
-                            )
+                            ),
+                            ' ',
+                            '- ',
+                            post.humanCreatedAt
                         ),
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                             'p',
@@ -59996,7 +60002,7 @@ var App = function (_Component) {
         value: function render() {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                { className: 'container' },
+                { className: 'container-fluid' },
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
                     { className: 'row justify-content-center' },
@@ -60009,7 +60015,7 @@ var App = function (_Component) {
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'div',
                                 { className: 'card-header' },
-                                'Write something'
+                                'Write something...'
                             ),
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'div',
@@ -60035,7 +60041,7 @@ var App = function (_Component) {
                             )
                         )
                     ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    this.state.posts.length > 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
                         { className: 'col-md-6' },
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(

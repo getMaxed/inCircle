@@ -30,7 +30,18 @@ class PostCreated implements ShouldBroadcast
     {
         return [
             new PrivateChannel('new-post'),
-            new PrivateChannel('App.User' . $this->post->user->id)
+            new PrivateChannel('App.User.' . $this->post->user->id)
         ];
     }
+
+    public function broadcastWith()
+    {
+        return [
+            'post' => array_merge($this->post->toArray(), [
+                'user' => $this->post->user,
+            ]),
+            'user' => $this->user
+        ];
+    }
+
 }

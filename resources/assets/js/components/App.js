@@ -34,8 +34,11 @@ class App extends Component {
 
     componentDidMount() {
         Echo.private('new-post').listen('PostCreated', (e) => {
-            // console.log(e)
-            this.setState({posts: [e.post, this.state.posts]})
+            // console.log('from pusher', e.post);
+            // this.setState({posts: [e.post, ...this.state.posts]});
+            if (window.Laravel.user.following.includes(e.post.user_id)) {
+                this.setState({posts: [e.post, ...this.state.posts]});
+            }
         })
         // this.interval = setInterval(() => this.getPosts(), 10000)
     }
@@ -50,9 +53,9 @@ class App extends Component {
         axios.post('/posts', {
             body: this.state.body
         }). then(response => {
-            console.log(response);
+            // console.log('from handle submit', response);
             this.setState({
-                posts: [...this.state.posts, response.data]
+                posts: [response.data, ...this.state.posts]
             })
         });
         this.setState ({
@@ -83,7 +86,8 @@ class App extends Component {
                     <div className="user">
                         <a href={`/users/${post.user.username}`}>
                             <b>{post.user.username}</b>
-                        </a>
+                        </a>{' '}
+                        - {post.humanCreatedAt}
                     </div>
                     <p>{post.body}</p>
                 </div>
@@ -93,11 +97,11 @@ class App extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container-fluid">
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <div className="card">
-                            <div className="card-header">Write something</div>
+                            <div className="card-header">Write something...</div>
 
                             <div className="card-body">
                                 <form onSubmit={this.handleSubmit}>
@@ -118,15 +122,17 @@ class App extends Component {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
-                        <div className="card">
-                            <div className="card-header">Recent posts</div>
-                                {!this.state.loading ? this.renderPosts() : 'Loading'}
-                            <div className="card-body">
 
+
+                    {this.state.posts.length > 0 && (
+                        <div className="col-md-6">
+                            <div className="card">
+                                <div className="card-header">Recent posts</div>
+                                    {!this.state.loading ? this.renderPosts() : 'Loading'}
+                                <div className="card-body" />
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         );

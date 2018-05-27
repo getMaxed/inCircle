@@ -30,13 +30,4 @@ class PostController extends Controller
         return response()->json($post->with('user')->find($createdPost->id));
     }
 
-    public function broadcastWith()
-    {
-        return [
-            'post' => array_merge($this->post->toArray(), [
-                'user' => $this->post->user,
-            ]),
-            'user' => $this->user
-        ];
-    }
 }

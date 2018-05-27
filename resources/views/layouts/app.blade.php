@@ -19,10 +19,26 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <script>
+        window.Laravel = <?php echo json_encode([
+            'csrf_token' => csrf_token(),
+            'user' => [
+                'id' => Auth::check() ? Auth::user()->id : null,
+                'following' => Auth::check() ? Auth::user()->following()->pluck('users.id') : null
+            ]
+        ])
+
+        ?>
+    </script>
+
+    <style>nav a {color: white}</style>
+
+
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-expand-md navbar-laravel bg-primary">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
